@@ -23,7 +23,7 @@ def read_palette_file(filepath):
     return palette
 
 # Function to create the image
-def create_image(pixel_data, palette_data):
+def create_image(pixel_data, palette_data, transparent_index=None):
     # Create a new image with mode 'P' (palette-based) and size 16x16
     img = Image.new('P', (IMAGE_WIDTH, IMAGE_HEIGHT))
     
@@ -33,6 +33,10 @@ def create_image(pixel_data, palette_data):
     # Apply the palette to the image
     img.putpalette(palette_data)
     
+    # Set transparency if specified
+    if transparent_index is not None:
+        img.info['transparency'] = transparent_index
+    
     return img
 
 def main():
@@ -41,6 +45,7 @@ def main():
     parser.add_argument('pixel_file', type=str, help='Path to the binary pixel data file.')
     parser.add_argument('palette_file', type=str, help='Path to the indexed color palette file.')
     parser.add_argument('--output_image', type=str, help='Path to save the output PNG image. If not set, defaults to the input pixel file name with .png extension.')
+    parser.add_argument('--transparent', type=int, help='Indexed color (byte value) to be set as transparent in the output image.')
 
     # Parse arguments
     args = parser.parse_args()
@@ -56,8 +61,8 @@ def main():
     pixel_data = read_binary_file(args.pixel_file)
     palette_data = read_palette_file(args.palette_file)
 
-    # Create and save the image
-    image = create_image(pixel_data, palette_data)
+    # Create and save the image with optional transparency
+    image = create_image(pixel_data, palette_data, transparent_index=args.transparent)
     image.save(output_image_path)
 
     print(f"Image saved as {output_image_path}")
