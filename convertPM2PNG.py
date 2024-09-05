@@ -2,9 +2,6 @@ import argparse
 from PIL import Image
 import os
 
-# Constants
-IMAGE_WIDTH = 16
-IMAGE_HEIGHT = 16
 
 # Function to read binary file
 def read_binary_file(filepath):
@@ -23,9 +20,9 @@ def read_palette_file(filepath):
     return palette
 
 # Function to create the image
-def create_image(pixel_data, palette_data, transparent_index=None):
+def create_image(pixel_data, palette_data, transparent_index=None, width=16, height=16):
     # Create a new image with mode 'P' (palette-based) and size 16x16
-    img = Image.new('P', (IMAGE_WIDTH, IMAGE_HEIGHT))
+    img = Image.new('P', (width, height))
     
     # Put the pixel data into the image
     img.putdata(pixel_data)
@@ -65,7 +62,8 @@ def main():
     parser.add_argument('--transparent', type=int, help='Indexed color (byte value) to be set as transparent in the output image.')
     # Add an optional argument for transparent colors list
     parser.add_argument('--color-list', type=str, help='Path to the transparent colors list file', default=None)
- 
+    parser.add_argument('--width', type=int, help='Width of the image in pixels', default=16)
+    parser.add_argument('--height', type=int, help='Height of the image in pixels', default=16)
 
     # Parse arguments
     args = parser.parse_args()
@@ -106,9 +104,9 @@ def main():
     # Continue processing based on the presence of transparent_color_index
     if transparent_color_index is not None and transparent_color_index != 255:
         # Handle transparent color index here
-        image = create_image(pixel_data, palette_data, transparent_index=transparent_color_index)
+        image = create_image(pixel_data, palette_data, transparent_index=transparent_color_index, width=args.width, height=args.height)
     else:
-        image = create_image(pixel_data, palette_data, transparent_index=args.transparent)
+        image = create_image(pixel_data, palette_data, transparent_index=args.transparent, width=args.width, height=args.height)
     image.save(output_image_path)
 
     print(f"Image saved as {output_image_path}")
