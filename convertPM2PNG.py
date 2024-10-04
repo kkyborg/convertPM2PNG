@@ -4,9 +4,9 @@ import os
 
 
 # Function to read binary file
-def read_binary_file(filepath):
+def read_binary_file(filepath, filesize):
     with open(filepath, 'rb') as file:
-        return list(file.read())
+        return list(file.read(filesize))
 
 # Function to read palette file
 def read_palette_file(filepath):
@@ -97,7 +97,7 @@ def main():
     
 
     # Reading data from files
-    pixel_data = read_binary_file(args.pixel_file)
+    pixel_data = read_binary_file(args.pixel_file, args.width * args.height)
     palette_data = read_palette_file(args.palette_file)
 
     # Create and save the image with optional transparency
